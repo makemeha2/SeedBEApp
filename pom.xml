@@ -70,11 +70,19 @@
             <version>3.0.5</version>
         </dependency>
 
-        <!-- MYBATIS 쿼리 로그 고도화 -->
+        <!-- MYBATIS 쿼리 로그 고도화 (현재 미사용)-->
         <dependency>
             <groupId>com.github.gavlyukovskiy</groupId>
             <artifactId>datasource-proxy-spring-boot-starter</artifactId>
             <version>1.12.0</version>
+        </dependency>
+
+        <!-- MYBATIS 쿼리 로그 고도화 (현재 사용중)-->
+        <dependency>
+            <groupId>p6spy</groupId>
+            <artifactId>p6spy</artifactId>
+            <version>3.9.1</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Security -->

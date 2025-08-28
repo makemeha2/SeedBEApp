@@ -1,0 +1,17 @@
+server:
+  port: 19090   # local 환경에서는 19090 포트로 실행
+
+spring:
+  datasource:
+    # secret-key는 환경변수로 설정
+    url: jdbc:p6spy:mariadb://localhost:3306/SeedBEAppDB
+    username: ENC(hQiz+S56g0lxwDtqy2pkFBIYalru1mZcmQv894o8uV5Ol2el+sH6tiGKQ7QdMDYP)                                 # 사용자명 (예시)
+    password: ENC(0rC5ohNoxi5U68zaKGRLL1wt0jSXeoMfyWLNlD9M9hWzMY0H/GGfWTGVCvy9Obuq)                                 # 비밀번호 (예시)
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver #org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # 개발 시에만 사용 권장
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
