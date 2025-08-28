@@ -44,7 +44,7 @@ logs/
 
 # ### OS Files ###
 # Mac
-.DS_Store
+# .DS_Store
 
 # Windows
 Thumbs.db
