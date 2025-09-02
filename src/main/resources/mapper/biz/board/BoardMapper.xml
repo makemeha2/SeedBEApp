@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heyso.SeedBEApp.biz.board.dao.BoardMapper">
+    <resultMap id="BoardResultMap" type="com.heyso.SeedBEApp.biz.board.model.Board">
+        <id     property="boardId" column="BOARD_ID"/>
+        <result property="category" column="CATEGORY"/>
+        <result property="title" column="TITLE"/>
+        <result property="contents" column="CONTENTS"/>
+        <result property="useYn" column="USE_YN"/>
+        <result property="rgstId" column="RGST_ID"/>
+        <result property="rgstDtm" column="RGST_DTM"/>
+        <result property="mdfcId" column="MDFC_ID"/>
+        <result property="mdfcDtm" column="MDFC_DTM"/>
+    </resultMap>
+
+    <!-- 목록 -->
+    <select id="selectBoardList" resultMap="BoardResultMap">
+        SELECT
+        BOARD_ID, CATEGORY, TITLE, CONTENTS, USE_YN,
+        RGST_ID, RGST_DTM, MDFC_ID, MDFC_DTM
+        FROM TB_BOARD
+        <where>
+            <if test="req.category != null and req.category != ''">
+                AND CATEGORY = #{req.category}
+            </if>
+            <if test="req.searchText != null and req.searchText != ''">
+                AND (TITLE LIKE CONCAT('%', #{req.searchText}, '%')
+                OR CONTENTS LIKE CONCAT('%', #{req.searchText}, '%'))
+                <!-- FULLTEXT 사용 시:
+                AND MATCH (TITLE, CONTENTS) AGAINST(#{req.searchText} IN BOOLEAN MODE)
+                -->
+            </if>
+            AND USE_YN = 'Y'
+        </where>
+        ORDER BY RGST_DTM DESC
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <!-- 총 건수 -->
+    <select id="selectBoardCount" resultType="long">
+        SELECT COUNT(1)
+        FROM TB_BOARD
+        <where>
+            <if test="req.category != null and req.category != ''">
+                AND CATEGORY = #{req.category}
+            </if>
+            <if test="req.searchText != null and req.searchText != ''">
+                AND (TITLE LIKE CONCAT('%', #{req.searchText}, '%')
+                OR CONTENTS LIKE CONCAT('%', #{req.searchText}, '%'))
+            </if>
+            AND USE_YN = 'Y'
+        </where>
+    </select>
+
+</mapper>

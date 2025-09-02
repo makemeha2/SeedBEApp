@@ -1,0 +1,2 @@
+
+CREATE INDEX IX_TB_BOARD_RGST_DTM ON TB_BOARD (RGST_DTM DESC);  -- 최신순 정렬이 빈번할 경우를 염두
