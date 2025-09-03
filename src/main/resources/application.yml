@@ -2,6 +2,10 @@ spring:
   application:
     name: SeedBEApp
 
+  output:
+    ansi:
+      enabled: ALWAYS   # 이 부분이 있어야 logback 로그에 색상이 표현됨
+
   profiles:
     active: local   # 실행 시 local 프로파일을 기본 활성화
 
@@ -9,7 +13,7 @@ server:
   port: 8080        # 기본 포트 (로컬이 아닐 때는 8080)
 
 mybatis:
-  mapper-locations: classpath:/mappers/**/**/*.xml
+  mapper-locations: classpath:/mapper/**/*.xml
   type-aliases-package: com.heyso.SeedBEApp
   configuration:
     map-underscore-to-camel-case: true

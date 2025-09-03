@@ -38,6 +38,7 @@ logging:
     org.apache.ibatis: INFO
     org.mybatis: INFO
 
+
 # MyBatis 관련 설정
 mybatis:
   configuration:

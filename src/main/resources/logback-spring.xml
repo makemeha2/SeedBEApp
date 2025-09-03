@@ -1,0 +1,23 @@
+<configuration>
+    <!-- ✅ converterClass -> class 로 변경 (경고 제거) -->
+    <conversionRule conversionWord="clr"
+                    class="org.springframework.boot.logging.logback.ColorConverter"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- ✅ 패턴 인코더 클래스 명시 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!-- ✅ 한 줄 패턴 + 색상 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(%-5level) %clr([%thread]){faint} %clr(%logger{36}){cyan} : %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- (선택) 시끄러운 로그 낮추기
+    <logger name="com.ulisesbocchio.jasyptspringboot" level="WARN"/>
+    <logger name="com.ulisesbocchio" level="WARN"/>
+    -->
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
