@@ -1,17 +1,14 @@
 package com.heyso.SeedBEApp.biz.board.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Getter @Setter @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@ToString
 @Alias("board")
 public class Board {
     private Long boardId;           // BOARD_ID

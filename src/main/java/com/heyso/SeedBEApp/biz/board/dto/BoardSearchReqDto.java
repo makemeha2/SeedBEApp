@@ -1,5 +1,8 @@
 package com.heyso.SeedBEApp.biz.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -21,6 +24,7 @@ public class BoardSearchReqDto {
     private Integer pageSize;
 
     /** 페이징 사용 여부 */
+    @JsonIgnore
     public boolean isPagingEnabled() {
         return page != null && pageSize != null && page > 0 && pageSize > 0;
     }

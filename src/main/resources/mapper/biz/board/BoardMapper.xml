@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heyso.SeedBEApp.biz.board.dao.BoardMapper">
-    <resultMap id="BoardResultMap" type="com.heyso.SeedBEApp.biz.board.model.Board">
+    <resultMap id="BoardResultMap" type="board">
         <id     property="boardId" column="BOARD_ID"/>
         <result property="category" column="CATEGORY"/>
         <result property="title" column="TITLE"/>
@@ -55,5 +55,52 @@
             AND USE_YN = 'Y'
         </where>
     </select>
+
+    <!-- 단건 조회 -->
+    <select id="selectById" resultMap="BoardResultMap">
+        SELECT
+            BOARD_ID, CATEGORY, TITLE, CONTENTS, USE_YN,
+            RGST_ID, RGST_DTM, MDFC_ID, MDFC_DTM
+        FROM TB_BOARD
+        WHERE
+            BOARD_ID = #{boardId}
+    </select>
+
+    <!-- 등록 -->
+    <insert id="insertBoard"
+            parameterType="com.heyso.SeedBEApp.biz.board.model.Board"
+            useGeneratedKeys="true" keyProperty="vo.boardId" keyColumn="BOARD_ID">
+        INSERT INTO TB_BOARD (CATEGORY, TITLE, CONTENTS, USE_YN, RGST_ID)
+        VALUES (#{vo.category}, #{vo.title}, #{vo.contents}, 'Y', #{vo.rgstId})
+    </insert>
+
+    <!-- 수정 -->
+    <update id="updateBoard"
+            parameterType="com.heyso.SeedBEApp.biz.board.model.Board">
+        UPDATE TB_BOARD
+        <set>
+            <if test="vo.category != null">CATEGORY = #{vo.category},</if>
+            <if test="vo.title != null">TITLE = #{vo.title},</if>
+            <if test="vo.contents != null">CONTENTS = #{vo.contents},</if>
+            <if test="vo.useYn != null">USE_YN = #{vo.useYn},</if>
+            <if test="vo.mdfcId != null">MDFC_ID = #{vo.mdfcId},</if>
+        </set>
+        WHERE BOARD_ID = #{vo.boardId}
+    </update>
+
+    <!-- 소프트 삭제: USE_YN = 'N' -->
+    <update id="deleteSoft">
+        UPDATE TB_BOARD
+        SET USE_YN = 'N',
+        MDFC_ID = #{mdfcId},
+        MDFC_DTM = CURRENT_TIMESTAMP
+        WHERE BOARD_ID = #{boardId}
+    </update>
+
+    <!-- 하드 삭제 -->
+    <delete id="deleteHard">
+        DELETE FROM TB_BOARD
+        WHERE BOARD_ID = #{boardId}
+    </delete>
 
 </mapper>
