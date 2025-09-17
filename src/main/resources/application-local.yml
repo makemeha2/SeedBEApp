@@ -8,6 +8,10 @@ spring:
     username: ENC(hQiz+S56g0lxwDtqy2pkFBIYalru1mZcmQv894o8uV5Ol2el+sH6tiGKQ7QdMDYP)                                 # 사용자명 (예시)
     password: ENC(0rC5ohNoxi5U68zaKGRLL1wt0jSXeoMfyWLNlD9M9hWzMY0H/GGfWTGVCvy9Obuq)                                 # 비밀번호 (예시)
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver #org.mariadb.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 50MB     # 하나의 파일의 최대 사이즈
+      max-request-size: 60MB  # 한번의 요청으로 허용가능한 여러개 파일의 합계 사이즈
 
 # JPA 로그는 끕니다(사용 중이어도 P6Spy가 찍으므로 중복 방지)
 #  jpa:
@@ -48,3 +52,10 @@ mybatis:
 #springdoc:
 #  swagger-ui:
 #    path: /service/swagger-ui.html
+
+# 파일 업로드 경로
+app:
+  upload:
+    # 윈도우/리눅스 모두 동작 가능한 기본 경로 (원하면 환경변수로 치환 가능)
+    dir: ${user.home}/SeedBEApp/uploads
+    uriPrefix: /files   # 다운로드/정적서빙용 URL prefix

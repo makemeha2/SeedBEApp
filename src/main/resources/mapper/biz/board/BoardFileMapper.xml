@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heyso.SeedBEApp.biz.board.dao.BoardFileMapper">
+
+    <insert id="insertBoardFiles">
+        INSERT INTO TB_BOARD_FILE
+        (BOARD_ID, ORG_FILE_NM, STORED_FILE_NM, FILE_EXT, MIME_TYPE, FILE_SIZE, FILE_PATH, USE_YN, RGST_ID)
+        VALUES
+        <foreach collection="list" item="f" separator=",">
+            (#{f.boardId}, #{f.orgFileNm}, #{f.storedFileNm}, #{f.fileExt}, #{f.mimeType},
+            #{f.fileSize}, #{f.filePath}, COALESCE(#{f.useYn}, 'Y'), #{f.rgstId})
+        </foreach>
+    </insert>
+
+    <select id="selectFilesByBoardId" resultType="com.heyso.SeedBEApp.biz.board.model.BoardFile">
+        SELECT
+            FILE_ID, BOARD_ID, ORG_FILE_NM, STORED_FILE_NM,
+            FILE_EXT, MIME_TYPE, FILE_SIZE, FILE_PATH,
+            USE_YN, RGST_ID, RGST_DTM, MDFC_ID, MDFC_DTM
+        FROM TB_BOARD_FILE
+        WHERE BOARD_ID = #{boardId}
+            AND USE_YN = 'Y'
+        ORDER BY FILE_ID ASC
+    </select>
+
+    <select id="selectFileById" resultType="com.heyso.SeedBEApp.biz.board.model.BoardFile">
+        SELECT
+            FILE_ID, BOARD_ID, ORG_FILE_NM, STORED_FILE_NM,
+            FILE_EXT, MIME_TYPE, FILE_SIZE, FILE_PATH,
+            USE_YN, RGST_ID, RGST_DTM, MDFC_ID, MDFC_DTM
+        FROM TB_BOARD_FILE
+        WHERE FILE_ID = #{fileId}
+    </select>
+
+    <delete id="deleteFileById">
+        UPDATE TB_BOARD_FILE SET USE_YN='N' WHERE FILE_ID=#{fileId}
+    </delete>
+
+</mapper>

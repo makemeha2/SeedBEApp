@@ -1,30 +1,33 @@
 package com.heyso.SeedBEApp.biz.board.web;
 
-import com.heyso.SeedBEApp.biz.board.dto.BoardCreateReqDto;
-import com.heyso.SeedBEApp.biz.board.dto.BoardListDto;
-import com.heyso.SeedBEApp.biz.board.dto.BoardSearchReqDto;
-import com.heyso.SeedBEApp.biz.board.dto.BoardUpdateReqDto;
+import com.heyso.SeedBEApp.biz.board.docs.BoardApiDocs;
+import com.heyso.SeedBEApp.biz.board.dto.*;
 import com.heyso.SeedBEApp.biz.board.model.Board;
+import com.heyso.SeedBEApp.biz.board.model.BoardFile;
+import com.heyso.SeedBEApp.biz.board.service.BoardFileService;
 import com.heyso.SeedBEApp.biz.board.service.BoardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/boards")
 @RequiredArgsConstructor
 @Validated
-public class BoardController {
+public class BoardController implements BoardApiDocs {
     private final BoardService boardService;
+    private final BoardFileService boardFileService;
 
-    @GetMapping
-    public BoardListDto list(BoardSearchReqDto req) {
-        // 쿼리스트링 예: /api/boards?category=NOTICE&searchText=hello&page=1&pageSize=20
-        return boardService.getBoardList(req);
-    }
+    @Value("${app.upload.uriPrefix:/files}")
+    private String uriPrefix;
 
     @PostMapping
     public ResponseEntity<Board> createBoard(@Valid @RequestBody BoardCreateReqDto req,
@@ -54,6 +57,57 @@ public class BoardController {
     @DeleteMapping("/{id}/hard")
     public ResponseEntity<Void> deleteHard(@PathVariable("id") Long id) {
         boardService.deleteHard(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public BoardListDto list(BoardSearchReqDto req) {
+        // 쿼리스트링 예: /api/boards?category=NOTICE&searchText=hello&page=1&pageSize=20
+        return boardService.getBoardList(req);
+    }
+
+    /* ---------------------------------------------------
+        첨부파일 관련
+    -----------------------------------------------------*/
+
+
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Long> createWithFiles(
+            @RequestPart("board") @Validated BoardCreateReqDto req,
+            @RequestPart(name = "files", required = false) List<MultipartFile> files,
+            UriComponentsBuilder uriBuilder
+    ) throws Exception {
+        Board created = boardService.createBoard(req);
+        Long id = created.getBoardId();
+
+        if(id > 0)
+            boardFileService.saveFiles(id, files, created.getRgstId());
+
+        return ResponseEntity.created(
+                        uriBuilder.path("/api/boards/{id}")
+                                .buildAndExpand(id)
+                                .toUri())
+                .body(id);
+    }
+
+    @GetMapping("/{id}/files")
+    public ResponseEntity<List<BoardFileResDto>> listFiles(@PathVariable("id") Long id) {
+        List<BoardFile> files = boardFileService.getFiles(id);
+        List<BoardFileResDto> res = files.stream()
+                .map(f -> BoardFileResDto.builder()
+                        .fileId(f.getFileId())
+                        .orgFileNm(f.getOrgFileNm())
+                        .fileSize(f.getFileSize())
+                        .downloadUrl(uriPrefix + "/" + f.getStoredFileNm())
+                        .build())
+                .toList();
+
+        return ResponseEntity.ok(res);
+    }
+
+    @DeleteMapping("/files/{fileId}")
+    public ResponseEntity<Void> deleteFile(@PathVariable Long fileId) throws Exception {
+        boardFileService.deleteFile(fileId);
         return ResponseEntity.noContent().build();
     }
 }
