@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Alias("board")
 public class Board {
     private Long boardId;           // BOARD_ID
-    private String category;        // CATEGORY
+    private BoardCategory category;        // CATEGORY
     private String title;           // TITLE
     private String contents;        // CONTENTS (Markdown)
     private String useYn;           // USE_YN ('Y' or 'N')

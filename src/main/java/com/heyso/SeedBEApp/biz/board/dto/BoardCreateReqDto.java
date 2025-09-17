@@ -1,6 +1,8 @@
 package com.heyso.SeedBEApp.biz.board.dto;
 
 
+import com.heyso.SeedBEApp.biz.board.model.BoardCategory;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +13,8 @@ import jakarta.validation.constraints.NotBlank;
 @Setter
 @ToString
 public class BoardCreateReqDto {
-    @NotBlank(message = "카테고리는 필수입니다.")
-    @Size(max = 10, message = "카테고리는 최대 10자입니다.")
-    private String category;
+    @NotNull
+    private BoardCategory category;
 
     @NotBlank(message = "제목은 필수입니다.")
     @Size(max = 300, message = "제목은 최대 300자입니다.")

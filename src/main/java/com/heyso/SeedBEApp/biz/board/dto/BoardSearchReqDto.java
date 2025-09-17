@@ -1,6 +1,7 @@
 package com.heyso.SeedBEApp.biz.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.heyso.SeedBEApp.biz.board.model.BoardCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import lombok.ToString;
 @ToString
 public class BoardSearchReqDto {
     /** 카테고리(선택) - null/빈문자면 전체 */
-    private String category;
+    private BoardCategory category;
 
     /** 검색어(선택) - 제목/본문 LIKE 검색 or FULLTEXT로 확장 가능 */
     private String searchText;

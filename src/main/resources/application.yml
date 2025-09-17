@@ -15,5 +15,6 @@ server:
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
   type-aliases-package: com.heyso.SeedBEApp
+  type-handlers-package: com.heyso.SeedBEApp.common.typehandler
   configuration:
     map-underscore-to-camel-case: true

@@ -6,6 +6,7 @@
     <resultMap id="BoardResultMap" type="board">
         <id     property="boardId" column="BOARD_ID"/>
         <result property="category" column="CATEGORY"/>
+        <result property="category" column="CATEGORY" javaType="com.heyso.SeedBEApp.biz.board.model.BoardCategory"/>
         <result property="title" column="TITLE"/>
         <result property="contents" column="CONTENTS"/>
         <result property="useYn" column="USE_YN"/>
