@@ -73,7 +73,7 @@ public class BoardController implements BoardApiDocs {
 
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> createWithFiles(
-            @RequestPart("board") @Validated BoardCreateReqDto req,
+            @RequestPart("board") @Valid BoardCreateReqDto req,
             @RequestPart(name = "files", required = false) List<MultipartFile> files,
             UriComponentsBuilder uriBuilder
     ) throws Exception {

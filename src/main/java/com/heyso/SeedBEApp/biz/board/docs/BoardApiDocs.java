@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public interface BoardApiDocs {
     )
     @PostMapping
     ResponseEntity<Board> createBoard(
-            @RequestBody BoardCreateReqDto req,
+            @Valid @RequestBody BoardCreateReqDto req,
             UriComponentsBuilder uriBuilder
     );
 
@@ -77,7 +78,7 @@ public interface BoardApiDocs {
     @PutMapping("/{id}")
     Board update(
             @Parameter(description = "게시글 ID") @PathVariable("id") Long id,
-            @RequestBody BoardUpdateReqDto req
+            @RequestBody @Valid BoardUpdateReqDto req
     );
 
     @Operation(
@@ -145,7 +146,7 @@ public interface BoardApiDocs {
     )
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<Long> createWithFiles(
-            @RequestPart("board") BoardCreateReqDto req,
+            @RequestPart("board")  @Valid BoardCreateReqDto req,
             @RequestPart(name = "files", required = false) List<MultipartFile> files,
             UriComponentsBuilder uriBuilder
     ) throws Exception;
