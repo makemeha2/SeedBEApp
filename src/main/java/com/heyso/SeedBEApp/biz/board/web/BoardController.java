@@ -6,6 +6,7 @@ import com.heyso.SeedBEApp.biz.board.model.Board;
 import com.heyso.SeedBEApp.biz.board.model.BoardFile;
 import com.heyso.SeedBEApp.biz.board.service.BoardFileService;
 import com.heyso.SeedBEApp.biz.board.service.BoardService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +23,8 @@ import java.util.List;
 @RequestMapping("/api/boards")
 @RequiredArgsConstructor
 @Validated
-public class BoardController implements BoardApiDocs {
+// public class BoardController implements BoardApiDocs {
+public class BoardController {
     private final BoardService boardService;
     private final BoardFileService boardFileService;
 
@@ -48,16 +50,16 @@ public class BoardController implements BoardApiDocs {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSoft(@PathVariable("id") Long id,
+    public ResponseEntity<String> deleteSoft(@PathVariable("id") Long id,
                                            @RequestParam(value="mdfcId", required=false) String mdfcId) {
         boardService.deleteSoft(id, mdfcId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("ok");
     }
 
     @DeleteMapping("/{id}/hard")
-    public ResponseEntity<Void> deleteHard(@PathVariable("id") Long id) {
+    public ResponseEntity<String> deleteHard(@PathVariable("id") Long id) {
         boardService.deleteHard(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("ok");
     }
 
     @GetMapping
@@ -75,6 +77,7 @@ public class BoardController implements BoardApiDocs {
     public ResponseEntity<Long> createWithFiles(
             @RequestPart("board") @Valid BoardCreateReqDto req,
             @RequestPart(name = "files", required = false) List<MultipartFile> files,
+            HttpServletRequest request,
             UriComponentsBuilder uriBuilder
     ) throws Exception {
         Board created = boardService.createBoard(req);
@@ -106,8 +109,8 @@ public class BoardController implements BoardApiDocs {
     }
 
     @DeleteMapping("/files/{fileId}")
-    public ResponseEntity<Void> deleteFile(@PathVariable Long fileId) throws Exception {
+    public ResponseEntity<String> deleteFile(@PathVariable Long fileId) throws Exception {
         boardFileService.deleteFile(fileId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("ok");
     }
 }
