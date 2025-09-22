@@ -2,8 +2,10 @@ package com.heyso.SeedBEApp.biz.board.service;
 
 import com.heyso.SeedBEApp.biz.board.dao.BoardFileMapper;
 import com.heyso.SeedBEApp.biz.board.model.BoardFile;
+import com.heyso.SeedBEApp.common.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -86,6 +88,10 @@ public class BoardFileService {
             if (affected > 0) {
                 try { Files.deleteIfExists(Paths.get(f.get().getFilePath())); } catch (Exception ignore) {}
             }
+        }
+        else
+        {
+            throw new ServiceException(HttpStatus.NOT_FOUND, "FILE_NOT_FOUND", "파일을 찾을 수 없습니다.");
         }
     }
 }

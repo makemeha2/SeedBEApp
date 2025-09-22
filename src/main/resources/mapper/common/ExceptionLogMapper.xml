@@ -1,0 +1,13 @@
+<!-- resources/mybatis/ExceptionLogMapper.xml -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heyso.SeedBEApp.common.exception.ExceptionLogMapper">
+    <insert id="insert" parameterType="com.heyso.SeedBEApp.common.exception.ExceptionLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO TB_COM_ERROR_LOG
+        (OCCURRED_AT, TRACE_ID, STATUS, ERROR_CODE, MESSAGE, PATH, HTTP_METHOD,
+        QUERY_STRING, HEADERS_JSON, BODY_TEXT, STACKTRACE)
+        VALUES
+        (#{occurredAt}, #{traceId}, #{status}, #{errorCode}, #{message}, #{path}, #{httpMethod},
+        #{queryString}, #{headersJson}, #{bodyText}, #{stacktrace})
+    </insert>
+</mapper>
