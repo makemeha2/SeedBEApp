@@ -9,6 +9,7 @@ import com.heyso.SeedBEApp.biz.board.model.Board;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardMapper boardMapper;
+    private final BoardFileService boardFileService;
 
     @Transactional(readOnly = true)
     public BoardListDto getBoardList(BoardSearchReqDto req) {
@@ -87,6 +89,31 @@ public class BoardService {
         int updated = boardMapper.updateBoard(toUpdate);
         if (updated < 1) throw new IllegalStateException("게시글 수정 실패");
 
+        return boardMapper.selectById(boardId);
+    }
+
+    @Transactional
+    public Board updateBoardWithFiles(Long boardId,
+                                      BoardUpdateReqDto meta,
+                                      List<MultipartFile> newFiles) throws Exception {
+        // 1) 메타 수정 (기존 메서드 재사용 → 중복 제거)
+        Board updated = this.updateBoard(boardId, meta);
+
+        // 2) 파일 삭제
+        if (meta.getDeleteFileIds() != null) {
+            for (Long fileId : meta.getDeleteFileIds()) {
+                boardFileService.deleteFile(fileId);
+            }
+        }
+
+        // 3) 파일 추가
+        if (newFiles != null && !newFiles.isEmpty()) {
+            // 수정자 ID는 meta.mdfcId가 있으면 쓰고, 없으면 기존 updateBoard에서 사용한 값과 동일 정책 사용
+            String actorId = "testnam01"; // TODO: Security 컨텍스트로 대체
+            boardFileService.saveFiles(boardId, newFiles, actorId);
+        }
+
+        // 4) 최종 상태 리턴
         return boardMapper.selectById(boardId);
     }
 

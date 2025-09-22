@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter @Setter @ToString
 public class BoardUpdateReqDto {
     @NotNull
@@ -16,4 +18,5 @@ public class BoardUpdateReqDto {
     private String contents;
     @Size(max = 1)
     private String useYn;
+    private List<Long> deleteFileIds;
 }

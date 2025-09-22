@@ -93,6 +93,14 @@ public class BoardController {
                 .body(id);
     }
 
+    @PutMapping(value = "/{id}/with-files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Board updateWithFiles(@PathVariable("id") Long id,
+                                 @RequestPart("board") BoardUpdateReqDto board,
+                                 @RequestPart(value = "files", required = false) List<MultipartFile> files)
+            throws Exception {
+        return boardService.updateBoardWithFiles(id, board, files);
+    }
+
     @GetMapping("/{id}/files")
     public ResponseEntity<List<BoardFileResDto>> listFiles(@PathVariable("id") Long id) {
         List<BoardFile> files = boardFileService.getFiles(id);
