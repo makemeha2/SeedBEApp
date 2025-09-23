@@ -29,5 +29,5 @@ import org.springframework.context.annotation.Configuration;
         bearerFormat = "JWT"
 )
 public class SpringDocConfig {
-    // 추가 설정이 필요하면 여기에서 bean 등록
+
 }

@@ -18,3 +18,10 @@ mybatis:
   type-handlers-package: com.heyso.SeedBEApp.common.typehandler
   configuration:
     map-underscore-to-camel-case: true
+
+app:
+  security:
+    jwt:
+      issuer: SeedBEApp
+      access-exp-min: 60 # Access 토큰 만료(분)
+      secret: ${JWT_SECRET:GVHRibT6J5RJmuOI3a5+osjQ/HaQXQg+ZZMmKzdIjw4=} # 운영은 환경변수 사용

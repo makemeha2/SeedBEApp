@@ -23,7 +23,7 @@
         RGST_ID, RGST_DTM, MDFC_ID, MDFC_DTM
         FROM TB_BOARD
         <where>
-            <if test="req.category != null and req.category != ''">
+            <if test="req.category != null">
                 AND CATEGORY = #{req.category}
             </if>
             <if test="req.searchText != null and req.searchText != ''">
@@ -46,7 +46,7 @@
         SELECT COUNT(1)
         FROM TB_BOARD
         <where>
-            <if test="req.category != null and req.category != ''">
+            <if test="req.category != null">
                 AND CATEGORY = #{req.category}
             </if>
             <if test="req.searchText != null and req.searchText != ''">

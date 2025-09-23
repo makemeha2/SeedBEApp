@@ -13,5 +13,7 @@ public class Application {
         SpringApplication.run(Application.class, args);
 
         // log.info("user.home system property = {}", System.getProperty("user.home"));
+
+        System.out.println(new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder().encode("password"));
     }
 }
