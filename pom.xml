@@ -22,6 +22,19 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <!-- Testcontainers 버전 BOM -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>1.20.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <!-- DevTool (Live Reload, Auto Restarting 등) -->
         <dependency>
@@ -133,12 +146,31 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Security Test (필요한지 확인 필요) -->
+        <!-- Security Test (JWT 토큰 등 인증 테스트시 필요) -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Testcontainers -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mariadb</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- DB Migration Tool -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
 
 
         <!-- application.yml 등의 config 정보를 쉽게 접근하고 관리하기 위한 용도 (일단 지워보고 사용해보고 효과를 체감해보자) -->

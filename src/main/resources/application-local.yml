@@ -65,3 +65,6 @@ app:
     # 윈도우/리눅스 모두 동작 가능한 기본 경로 (원하면 환경변수로 치환 가능)
     dir: ${user.home}/SeedBEApp/uploads
     uriPrefix: /files   # 다운로드/정적서빙용 URL prefix
+  security:
+    jwt:
+      access-exp-min: 5256000   # 10년 = 10*365*24*60  (로컬환경에서는 토큰 유효기간을 길게 잡음)
