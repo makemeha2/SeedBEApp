@@ -1,11 +1,16 @@
 spring:
-  profiles:
-    active: test
+#  profiles:
+#    active: test
+  datasource:
+    url: jdbc:mariadb://localhost:3306/seedbeapp_test_db
+    username: root
+    password: 1234
+    driver-class-name: org.mariadb.jdbc.Driver
   flyway:
     enabled: true
     locations: classpath:db/migration   # 마이그레이션 스크립트 위치
     baseline-on-migrate: true           # 빈 DB일 경우 baseline 생성
-    clean-disabled: true               # 필요 시 clean 허용 (운영에서는 false 권장)
+    clean-disabled: false               # 필요 시 clean 허용 (운영에서는 false 권장)
   servlet:
     multipart:
       max-file-size: 15MB
@@ -22,11 +27,11 @@ app:
   upload:
     dir: ${java.io.tmpdir}/SeedBEApp/uploads-test
     uriPrefix: /files
-#  security:
-#    jwt:
-#      secret: test-secret-32bytes-at-least-1234567890abcd   # ← JwtTokenProvider 생성에 필요
-#      access-exp-min: 60
-#      issuer: SeedBEAppTest
+  security:
+    jwt:
+      secret: wSJGtef6uggyHYm/r41TWeKI7RvfBrBnQvRn+Rb3ksU=   # ← JwtTokenProvider 생성에 필요
+      access-exp-min: 60
+      issuer: SeedBEAppTest
 
 
 

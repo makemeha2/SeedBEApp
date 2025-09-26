@@ -8,6 +8,9 @@ spring:
 
   profiles:
     active: local   # 실행 시 local 프로파일을 기본 활성화
+    
+  flyway:
+    enabled: false  # flyway는 테스트시에만 사용
 
 server:
   port: 8080        # 기본 포트 (로컬이 아닐 때는 8080)

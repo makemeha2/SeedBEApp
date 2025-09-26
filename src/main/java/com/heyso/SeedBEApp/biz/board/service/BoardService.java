@@ -1,11 +1,9 @@
 package com.heyso.SeedBEApp.biz.board.service;
 
 import com.heyso.SeedBEApp.biz.board.dao.BoardMapper;
-import com.heyso.SeedBEApp.biz.board.dto.BoardCreateReqDto;
-import com.heyso.SeedBEApp.biz.board.dto.BoardListDto;
-import com.heyso.SeedBEApp.biz.board.dto.BoardSearchReqDto;
-import com.heyso.SeedBEApp.biz.board.dto.BoardUpdateReqDto;
+import com.heyso.SeedBEApp.biz.board.dto.*;
 import com.heyso.SeedBEApp.biz.board.model.Board;
+import com.heyso.SeedBEApp.biz.board.model.BoardFile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +46,20 @@ public class BoardService {
                 .page(page)
                 .pageSize(pageSize)
                 .totalPages(totalPages)
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public BoardDetailDto getBoardDetail(Long boardId) {
+        Board board = boardMapper.selectById(boardId);
+        if (board == null) {
+            throw new IllegalArgumentException("존재하지 않는 게시글: " + boardId);
+        }
+
+        List<BoardFile> files = boardFileService.getFiles(boardId);
+        return BoardDetailDto.builder()
+                .board(board)
+                .files(files)
                 .build();
     }
 

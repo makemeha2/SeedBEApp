@@ -65,6 +65,7 @@
         FROM TB_BOARD
         WHERE
             BOARD_ID = #{boardId}
+            AND USE_YN = 'Y'
     </select>
 
     <!-- 등록 -->

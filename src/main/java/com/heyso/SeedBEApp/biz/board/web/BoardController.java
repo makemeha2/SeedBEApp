@@ -68,6 +68,11 @@ public class BoardController {
         return boardService.getBoardList(req);
     }
 
+    @GetMapping("/{id}")
+    public BoardDetailDto getDetail(@PathVariable("id") Long id) {
+        return boardService.getBoardDetail(id);
+    }
+
     /* ---------------------------------------------------
         첨부파일 관련
     -----------------------------------------------------*/
