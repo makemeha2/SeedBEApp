@@ -1,7 +1,6 @@
 package com.heyso.SeedBEApp;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jasypt.util.text.AES256TextEncryptor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -11,9 +10,5 @@ public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
-
-        // log.info("user.home system property = {}", System.getProperty("user.home"));
-
-        System.out.println(new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder().encode("password"));
     }
 }

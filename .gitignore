@@ -37,9 +37,10 @@ build/
 ### Mac OS ###
 .DS_Store
 
-# ### Logs ###
+# logs & runtime outputs
 *.log
 logs/
+*.out
 
 
 # ### OS Files ###

@@ -16,6 +16,7 @@ public class TraceIdFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
         String traceId = UUID.randomUUID().toString();
 
         // MDC란 멀티클라이언트 환경에서 다른 클라이언트와 값을 구분하여 로그를 추적할수 있도록 제공되는 맵이다.

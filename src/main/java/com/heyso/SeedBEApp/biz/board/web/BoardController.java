@@ -31,22 +31,56 @@ public class BoardController {
     @Value("${app.upload.uriPrefix:/files}")
     private String uriPrefix;
 
-    @PostMapping
-    public ResponseEntity<Board> createBoard(@Valid @RequestBody BoardCreateReqDto req,
-                                               UriComponentsBuilder uriBuilder) {
+    // 게시물 생성
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> createBoard(@Valid @RequestBody BoardCreateReqDto req, UriComponentsBuilder uriBuilder) {
         Board created = boardService.createBoard(req);
 
         return ResponseEntity.created(
                 uriBuilder.path("/api/boards/{id}")
                         .buildAndExpand(created.getBoardId())
                         .toUri()
-        ).body(created);
+        ).body(created.getBoardId());
     }
 
-    @PutMapping("/{id}")
-    public Board update(@PathVariable("id") Long id,
+    // 게시물 생성 (with 첨부파일)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> createWithFiles(
+            @RequestPart("board") @Valid BoardCreateReqDto req,
+            @RequestPart(name = "files", required = false) List<MultipartFile> files,
+            HttpServletRequest request,
+            UriComponentsBuilder uriBuilder
+    ) throws Exception {
+        Board created = boardService.createBoard(req);
+        Long id = created.getBoardId();
+
+        if(id > 0)
+            boardFileService.saveFiles(id, files, created.getRgstId());
+
+        return ResponseEntity.created(
+                        uriBuilder.path("/api/boards/{id}")
+                                .buildAndExpand(id)
+                                .toUri())
+                .body(id);
+    }
+
+    // 게시물 수정
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> update(@PathVariable("id") Long id,
                         @RequestBody @Valid BoardUpdateReqDto req) {
-        return boardService.updateBoard(id, req);
+        boardService.updateBoard(id, req);
+
+        return ResponseEntity.ok(id);
+    }
+
+    @PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> updateWithFiles(@PathVariable("id") Long id,
+                                 @RequestPart("board") BoardUpdateReqDto board,
+                                 @RequestPart(value = "files", required = false) List<MultipartFile> files)
+            throws Exception {
+        boardService.updateBoardWithFiles(id, board, files);
+
+        return ResponseEntity.ok(id);
     }
 
     @DeleteMapping("/{id}")
@@ -76,35 +110,6 @@ public class BoardController {
     /* ---------------------------------------------------
         첨부파일 관련
     -----------------------------------------------------*/
-
-
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Long> createWithFiles(
-            @RequestPart("board") @Valid BoardCreateReqDto req,
-            @RequestPart(name = "files", required = false) List<MultipartFile> files,
-            HttpServletRequest request,
-            UriComponentsBuilder uriBuilder
-    ) throws Exception {
-        Board created = boardService.createBoard(req);
-        Long id = created.getBoardId();
-
-        if(id > 0)
-            boardFileService.saveFiles(id, files, created.getRgstId());
-
-        return ResponseEntity.created(
-                        uriBuilder.path("/api/boards/{id}")
-                                .buildAndExpand(id)
-                                .toUri())
-                .body(id);
-    }
-
-    @PutMapping(value = "/{id}/with-files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Board updateWithFiles(@PathVariable("id") Long id,
-                                 @RequestPart("board") BoardUpdateReqDto board,
-                                 @RequestPart(value = "files", required = false) List<MultipartFile> files)
-            throws Exception {
-        return boardService.updateBoardWithFiles(id, board, files);
-    }
 
     @GetMapping("/{id}/files")
     public ResponseEntity<List<BoardFileResDto>> listFiles(@PathVariable("id") Long id) {

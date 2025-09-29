@@ -80,12 +80,9 @@ class BoardControllerIT extends BaseDbIT {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.boardId").exists())
-                .andExpect(jsonPath("$.title").value("JSON 생성 제목"))
                 .andReturn();
 
-        var createdId = om.readTree(createRes.getResponse().getContentAsString())
-                .get("boardId").asLong();
+        var createdId = Long.parseLong(createRes.getResponse().getContentAsString());
         assertThat(createdId).isPositive();
 
         // 2) 목록 확인
@@ -191,14 +188,13 @@ class BoardControllerIT extends BaseDbIT {
                 "new".getBytes(StandardCharsets.UTF_8)
         );
 
-        mvc.perform(multipart("/api/boards/{id}/with-files", createdId)
+        mvc.perform(multipart("/api/boards/{id}", createdId)
                         .file(updatePart).file(newFile)
                         .with(req -> { req.setMethod("PUT"); return req; })
                         .accept(MediaType.APPLICATION_JSON)
                         .header("Authorization", bearer()))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("수정된 제목"));
+                .andExpect(status().isOk());
 
         // 5) 다시 상세 확인: 기존 파일은 모두 정리되고 새 파일만 남았는지 확인 (파일 1건)
         mvc.perform(get("/api/boards/{id}", createdId)
@@ -228,7 +224,7 @@ class BoardControllerIT extends BaseDbIT {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        var id = om.readTree(createRes.getResponse().getContentAsString()).get("boardId").asLong();
+        Long id = Long.parseLong(createRes.getResponse().getContentAsString());
 
         // 존재 확인
         mvc.perform(get("/api/boards/{id}", id).header("Authorization", bearer())).andExpect(status().isOk());
