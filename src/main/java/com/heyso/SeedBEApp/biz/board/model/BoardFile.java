@@ -19,8 +19,10 @@ public class BoardFile {
     private Long fileSize;
     private String filePath;
     private String useYn;
-    private String rgstId;
-    private LocalDateTime rgstDtm;
-    private String mdfcId;
-    private LocalDateTime mdfcDtm;
+    private Long rgstId;          // RGST_ID
+    private String rgstUsername;
+    private LocalDateTime rgstDtm;  // RGST_DTM
+    private Long mdfcId;          // MDFC_ID
+    private String mdfcUsername;
+    private LocalDateTime mdfcDtm;  // MDFC_DTM
 }

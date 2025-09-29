@@ -9,32 +9,40 @@
         <result property="title" column="TITLE"/>
         <result property="contents" column="CONTENTS"/>
         <result property="useYn" column="USE_YN"/>
-        <result property="rgstId" column="RGST_ID"/>
+
+        <!-- FK (BIGINT) -->
+        <result property="rgstId" column="RGST_ID" javaType="long"/>
+        <result property="mdfcId" column="MDFC_ID" javaType="long"/>
+
+        <!-- JOIN으로 가져온 username (읽기용) -->
+        <result property="rgstUsername" column="RGST_USERNAME"/>
+        <result property="mdfcUsername" column="MDFC_USERNAME"/>
+
         <result property="rgstDtm" column="RGST_DTM"/>
-        <result property="mdfcId" column="MDFC_ID"/>
         <result property="mdfcDtm" column="MDFC_DTM"/>
     </resultMap>
 
     <!-- 목록 -->
     <select id="selectBoardList" resultMap="BoardResultMap">
         SELECT
-        BOARD_ID, CATEGORY, TITLE, CONTENTS, USE_YN,
-        RGST_ID, RGST_DTM, MDFC_ID, MDFC_DTM
-        FROM TB_BOARD
+            B.BOARD_ID, B.CATEGORY, B.TITLE, B.CONTENTS, B.USE_YN,
+            B.RGST_ID, B.RGST_DTM, B.MDFC_ID, B.MDFC_DTM,
+            RU.USERNAME AS RGST_USERNAME,
+            MU.USERNAME AS MDFC_USERNAME
+        FROM TB_BOARD B
+            LEFT JOIN TB_COM_USER RU ON RU.USER_ID = B.RGST_ID
+            LEFT JOIN TB_COM_USER MU ON MU.USER_ID = B.MDFC_ID
         <where>
             <if test="req.category != null">
-                AND CATEGORY = #{req.category}
+                AND B.CATEGORY = #{req.category}
             </if>
             <if test="req.searchText != null and req.searchText != ''">
-                AND (TITLE LIKE CONCAT('%', #{req.searchText}, '%')
-                OR CONTENTS LIKE CONCAT('%', #{req.searchText}, '%'))
-                <!-- FULLTEXT 사용 시:
-                AND MATCH (TITLE, CONTENTS) AGAINST(#{req.searchText} IN BOOLEAN MODE)
-                -->
+                AND (B.TITLE LIKE CONCAT('%', #{req.searchText}, '%')
+                OR B.CONTENTS LIKE CONCAT('%', #{req.searchText}, '%'))
             </if>
-            AND USE_YN = 'Y'
+            AND B.USE_YN = 'Y'
         </where>
-        ORDER BY RGST_DTM DESC
+        ORDER BY B.RGST_DTM DESC
         <if test="offset != null and limit != null">
             LIMIT #{limit} OFFSET #{offset}
         </if>
@@ -59,12 +67,15 @@
     <!-- 단건 조회 -->
     <select id="selectById" resultMap="BoardResultMap">
         SELECT
-            BOARD_ID, CATEGORY, TITLE, CONTENTS, USE_YN,
-            RGST_ID, RGST_DTM, MDFC_ID, MDFC_DTM
-        FROM TB_BOARD
-        WHERE
-            BOARD_ID = #{boardId}
-            AND USE_YN = 'Y'
+            B.BOARD_ID, B.CATEGORY, B.TITLE, B.CONTENTS, B.USE_YN,
+            B.RGST_ID, B.RGST_DTM, B.MDFC_ID, B.MDFC_DTM,
+            RU.USERNAME AS RGST_USERNAME,
+            MU.USERNAME AS MDFC_USERNAME
+        FROM TB_BOARD B
+            LEFT JOIN TB_COM_USER RU ON RU.USER_ID = B.RGST_ID
+            LEFT JOIN TB_COM_USER MU ON MU.USER_ID = B.MDFC_ID
+        WHERE B.BOARD_ID = #{boardId}
+            AND B.USE_YN = 'Y'
     </select>
 
     <!-- 등록 -->

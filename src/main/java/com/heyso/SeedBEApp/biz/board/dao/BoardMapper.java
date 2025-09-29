@@ -22,7 +22,7 @@ public interface BoardMapper {
     int updateBoard(@Param("vo") Board vo);
 
     int deleteSoft(@Param("boardId") Long boardId,
-                   @Param("mdfcId") String mdfcId);
+                   @Param("mdfcId") Long mdfcId);
 
     int deleteHard(@Param("boardId") Long boardId);
 }

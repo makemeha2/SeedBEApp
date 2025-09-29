@@ -3,38 +3,88 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heyso.SeedBEApp.biz.board.dao.BoardFileMapper">
 
+    <!-- BoardFile 매핑: FK + JOIN된 username 동시 매핑 -->
+    <resultMap id="BoardFileResultMap" type="com.heyso.SeedBEApp.biz.board.model.BoardFile">
+        <id     property="fileId"        column="FILE_ID"/>
+        <result property="boardId"       column="BOARD_ID"/>
+        <result property="orgFileNm"     column="ORG_FILE_NM"/>
+        <result property="storedFileNm"  column="STORED_FILE_NM"/>
+        <result property="fileExt"       column="FILE_EXT"/>
+        <result property="mimeType"      column="MIME_TYPE"/>
+        <result property="fileSize"      column="FILE_SIZE"/>
+        <result property="filePath"      column="FILE_PATH"/>
+        <result property="useYn"         column="USE_YN"/>
+
+        <!-- FK (BIGINT) -->
+        <result property="rgstId"        column="RGST_ID"  javaType="long"/>
+        <result property="mdfcId"        column="MDFC_ID"  javaType="long"/>
+
+        <!-- JOIN으로 가져온 username (읽기용) -->
+        <result property="rgstUsername"  column="RGST_USERNAME"/>
+        <result property="mdfcUsername"  column="MDFC_USERNAME"/>
+
+        <result property="rgstDtm"       column="RGST_DTM"/>
+        <result property="mdfcDtm"       column="MDFC_DTM"/>
+    </resultMap>
+
+    <!-- 등록: 리스트 일괄 insert, USE_YN 기본 'Y', RGST_ID = 현재 사용자(USER_ID) -->
     <insert id="insertBoardFiles">
         INSERT INTO TB_BOARD_FILE
         (BOARD_ID, ORG_FILE_NM, STORED_FILE_NM, FILE_EXT, MIME_TYPE, FILE_SIZE, FILE_PATH, USE_YN, RGST_ID)
         VALUES
         <foreach collection="list" item="f" separator=",">
-            (#{f.boardId}, #{f.orgFileNm}, #{f.storedFileNm}, #{f.fileExt}, #{f.mimeType},
-            #{f.fileSize}, #{f.filePath}, COALESCE(#{f.useYn}, 'Y'), #{f.rgstId})
+            (
+            #{f.boardId},
+            #{f.orgFileNm},
+            #{f.storedFileNm},
+            #{f.fileExt},
+            #{f.mimeType},
+            #{f.fileSize},
+            #{f.filePath},
+            COALESCE(#{f.useYn}, 'Y'),
+            #{f.rgstId}
+            )
         </foreach>
     </insert>
 
-    <select id="selectFilesByBoardId" resultType="com.heyso.SeedBEApp.biz.board.model.BoardFile">
+    <!-- 게시글별 파일 목록: 작성/수정자 username JOIN -->
+    <select id="selectFilesByBoardId" resultMap="BoardFileResultMap">
         SELECT
-            FILE_ID, BOARD_ID, ORG_FILE_NM, STORED_FILE_NM,
-            FILE_EXT, MIME_TYPE, FILE_SIZE, FILE_PATH,
-            USE_YN, RGST_ID, RGST_DTM, MDFC_ID, MDFC_DTM
-        FROM TB_BOARD_FILE
-        WHERE BOARD_ID = #{boardId}
-            AND USE_YN = 'Y'
-        ORDER BY FILE_ID ASC
+            F.FILE_ID, F.BOARD_ID, F.ORG_FILE_NM, F.STORED_FILE_NM,
+            F.FILE_EXT, F.MIME_TYPE, F.FILE_SIZE, F.FILE_PATH,
+            F.USE_YN, F.RGST_ID, F.RGST_DTM, F.MDFC_ID, F.MDFC_DTM,
+            RU.USERNAME AS RGST_USERNAME,
+            MU.USERNAME AS MDFC_USERNAME
+        FROM TB_BOARD_FILE F
+            LEFT JOIN TB_COM_USER RU ON RU.USER_ID = F.RGST_ID
+            LEFT JOIN TB_COM_USER MU ON MU.USER_ID = F.MDFC_ID
+        WHERE F.BOARD_ID = #{boardId}
+            AND F.USE_YN = 'Y'
+        ORDER BY F.FILE_ID ASC
     </select>
 
-    <select id="selectFileById" resultType="com.heyso.SeedBEApp.biz.board.model.BoardFile">
+    <!-- 단건 조회: username JOIN 포함 -->
+    <select id="selectFileById" resultMap="BoardFileResultMap">
         SELECT
-            FILE_ID, BOARD_ID, ORG_FILE_NM, STORED_FILE_NM,
-            FILE_EXT, MIME_TYPE, FILE_SIZE, FILE_PATH,
-            USE_YN, RGST_ID, RGST_DTM, MDFC_ID, MDFC_DTM
-        FROM TB_BOARD_FILE
+            F.FILE_ID, F.BOARD_ID, F.ORG_FILE_NM, F.STORED_FILE_NM,
+            F.FILE_EXT, F.MIME_TYPE, F.FILE_SIZE, F.FILE_PATH,
+            F.USE_YN, F.RGST_ID, F.RGST_DTM, F.MDFC_ID, F.MDFC_DTM,
+            RU.USERNAME AS RGST_USERNAME,
+            MU.USERNAME AS MDFC_USERNAME
+        FROM TB_BOARD_FILE F
+            LEFT JOIN TB_COM_USER RU ON RU.USER_ID = F.RGST_ID
+            LEFT JOIN TB_COM_USER MU ON MU.USER_ID = F.MDFC_ID
+        WHERE F.FILE_ID = #{fileId}
+    </select>
+
+    <!-- 소프트 삭제: USE_YN='N', 수정자/수정시각 기록 -->
+    <!-- 파라미터: fileId(Long), mdfcId(Long) -->
+    <update id="deleteFileById">
+        UPDATE TB_BOARD_FILE
+            SET USE_YN = 'N',
+            MDFC_ID = #{mdfcId},
+            MDFC_DTM = CURRENT_TIMESTAMP
         WHERE FILE_ID = #{fileId}
-    </select>
-
-    <delete id="deleteFileById">
-        UPDATE TB_BOARD_FILE SET USE_YN='N' WHERE FILE_ID=#{fileId}
-    </delete>
+    </update>
 
 </mapper>

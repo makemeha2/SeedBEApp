@@ -38,7 +38,7 @@ public class BoardFileService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<BoardFile> saveFiles(Long boardId, List<MultipartFile> files, String rgstId) throws IOException {
+    public List<BoardFile> saveFiles(Long boardId, List<MultipartFile> files, Long rgstId) throws IOException {
         if (files == null || files.isEmpty()) return Collections.emptyList();
 
         Path base = Paths.get(uploadDir).toAbsolutePath().normalize();

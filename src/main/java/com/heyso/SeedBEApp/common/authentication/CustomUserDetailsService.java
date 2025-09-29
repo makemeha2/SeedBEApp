@@ -20,6 +20,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found or disabled: " + username);
         }
         u.setRoles(userMapper.findRoles(u.getUserId()));
-        return new CustomUserDetails(u.getUsername(), u.getPasswordHash(), true, u.getRoles());
+        return new CustomUserDetails(u.getUserId(), u.getUsername(), u.getPasswordHash(), true, u.getRoles());
     }
 }

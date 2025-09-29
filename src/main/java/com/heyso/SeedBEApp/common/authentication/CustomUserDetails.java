@@ -10,18 +10,21 @@ import java.util.Collections;
 import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
+    private final Long userId;
     private final String username;
     private final String passwordHash;
     private final boolean enabled;
     private final List<String> roles;
 
-    public CustomUserDetails(String username, String passwordHash, boolean enabled, List<String> roles) {
+    public CustomUserDetails(Long userId, String username, String passwordHash, boolean enabled, List<String> roles) {
+        this.userId = userId;
         this.username = username;
         this.passwordHash = passwordHash;
         this.enabled = enabled;
         this.roles = roles != null ? roles : Collections.emptyList();
     }
 
+    public Long getUserId() { return userId; }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

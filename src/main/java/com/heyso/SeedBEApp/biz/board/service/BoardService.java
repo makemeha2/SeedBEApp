@@ -4,6 +4,7 @@ import com.heyso.SeedBEApp.biz.board.dao.BoardMapper;
 import com.heyso.SeedBEApp.biz.board.dto.*;
 import com.heyso.SeedBEApp.biz.board.model.Board;
 import com.heyso.SeedBEApp.biz.board.model.BoardFile;
+import com.heyso.SeedBEApp.common.authentication.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +70,7 @@ public class BoardService {
                 .category(req.getCategory())
                 .title(req.getTitle())
                 .contents(req.getContents())
-                .rgstId("testnam01")
+                .rgstId(AuthUtil.requireUserId())
                 .build();
 
         int inserted = boardMapper.insertBoard(vo);
@@ -95,7 +96,7 @@ public class BoardService {
                 .title(req.getTitle())
                 .contents(req.getContents())
                 .useYn(req.getUseYn()) // 필요 시 'Y'/'N' 검증 로직 추가
-                .mdfcId("testnam01")
+                .mdfcId(AuthUtil.requireUserId())
                 .build();
 
         int updated = boardMapper.updateBoard(toUpdate);
@@ -121,8 +122,7 @@ public class BoardService {
         // 3) 파일 추가
         if (newFiles != null && !newFiles.isEmpty()) {
             // 수정자 ID는 meta.mdfcId가 있으면 쓰고, 없으면 기존 updateBoard에서 사용한 값과 동일 정책 사용
-            String actorId = "testnam01"; // TODO: Security 컨텍스트로 대체
-            boardFileService.saveFiles(boardId, newFiles, actorId);
+            boardFileService.saveFiles(boardId, newFiles, AuthUtil.requireUserId());
         }
 
         // 4) 최종 상태 리턴
@@ -130,8 +130,8 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteSoft(Long boardId, String mdfcId) {
-        int updated = boardMapper.deleteSoft(boardId, mdfcId != null ? mdfcId : "testnam01");
+    public void deleteSoft(Long boardId) {
+        int updated = boardMapper.deleteSoft(boardId, AuthUtil.requireUserId());
         if (updated < 1) throw new IllegalStateException("소프트 삭제 실패");
     }
 

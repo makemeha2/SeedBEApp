@@ -86,7 +86,7 @@ public class BoardController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteSoft(@PathVariable("id") Long id,
                                            @RequestParam(value="mdfcId", required=false) String mdfcId) {
-        boardService.deleteSoft(id, mdfcId);
+        boardService.deleteSoft(id);
         return ResponseEntity.ok("ok");
     }
 

@@ -46,7 +46,10 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/error",
                                 "/files/**",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml"
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml",
+                                "/api/notice/**" // 게시판
                         ).permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()

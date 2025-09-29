@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -43,5 +44,22 @@ public class JwtTokenProvider {
 
     public Jws<Claims> parse(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+    }
+
+    public Long extractUserId(Claims claims) {
+        Object v = claims.get("userId");
+        return (v == null) ? null : Long.valueOf(String.valueOf(v));
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> extractRoles(Claims claims) {
+        Object v = claims.get("roles");
+        if (v instanceof List<?> list) {
+            return (List<String>) list;
+        }
+        else
+        {
+            return Collections.emptyList();
+        }
     }
 }

@@ -31,16 +31,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
             try {
                 Jws<Claims> jws = tokenProvider.parse(token);
+                Claims claims = jws.getBody();
+
+                Long userId = tokenProvider.extractUserId(claims);
                 String username = jws.getBody().getSubject();
                 @SuppressWarnings("unchecked")
-                List<String> roles = (List<String>) jws.getBody().get("roles");
+                List<String> roles = tokenProvider.extractRoles(claims); // List<String>) jws.getBody().get("roles");
 
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        username, null, new CustomUserDetails(username, "", true, roles).getAuthorities());
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                var principal = new CustomUserDetails(userId, username, "", true, roles);
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(principal, jws, principal.getAuthorities());
+
+//                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+//                        username, null, new CustomUserDetails(userId, username, "", true, roles).getAuthorities());
+//                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {
                 // 토큰 오류 시 인증정보 미설정 (EntryPoint에서 처리)
+                SecurityContextHolder.clearContext();
             }
         }
         chain.doFilter(request, response);

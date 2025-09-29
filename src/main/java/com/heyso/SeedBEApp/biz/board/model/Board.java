@@ -16,8 +16,10 @@ public class Board {
     private String title;           // TITLE
     private String contents;        // CONTENTS (Markdown)
     private String useYn;           // USE_YN ('Y' or 'N')
-    private String rgstId;          // RGST_ID
+    private Long rgstId;          // RGST_ID
+    private String rgstUsername;
     private LocalDateTime rgstDtm;  // RGST_DTM
-    private String mdfcId;          // MDFC_ID
+    private Long mdfcId;          // MDFC_ID
+    private String mdfcUsername;
     private LocalDateTime mdfcDtm;  // MDFC_DTM
 }
