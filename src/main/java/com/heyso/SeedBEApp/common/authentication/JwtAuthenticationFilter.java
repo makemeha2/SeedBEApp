@@ -33,12 +33,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Jws<Claims> jws = tokenProvider.parse(token);
                 Claims claims = jws.getBody();
 
-                Long userId = tokenProvider.extractUserId(claims);
-                String username = jws.getBody().getSubject();
-                @SuppressWarnings("unchecked")
+                Long userId = Long.valueOf(jws.getBody().getSubject());
+                String username = tokenProvider.extractUsername(claims);
+                String name = tokenProvider.extractName(claims);
                 List<String> roles = tokenProvider.extractRoles(claims); // List<String>) jws.getBody().get("roles");
 
-                var principal = new CustomUserDetails(userId, username, "", true, roles);
+                var principal = new CustomUserDetails(userId, username, name, "", true, roles);
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(principal, jws, principal.getAuthorities());
 
 //                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(

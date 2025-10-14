@@ -7,7 +7,7 @@ spring:
     password: 1234
     driver-class-name: org.mariadb.jdbc.Driver
   flyway:
-    enabled: true
+    enabled: false
     locations: classpath:db/migration   # 마이그레이션 스크립트 위치
     baseline-on-migrate: true           # 빈 DB일 경우 baseline 생성
     clean-disabled: false               # 필요 시 clean 허용 (운영에서는 false 권장)

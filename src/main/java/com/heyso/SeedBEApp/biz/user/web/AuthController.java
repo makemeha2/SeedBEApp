@@ -40,7 +40,7 @@ public class AuthController {
 // 3) 권한 로드
         List<String> roles = userMapper.findRoles(u.getUserId());
 // 4) 토큰 발급
-        String token = tokenProvider.createAccessToken(u.getUsername(), roles);
+        String token = tokenProvider.createAccessToken(u, roles);
         long expSec = 60L * 60L; // access-exp-min과 맞춰도 됨
         return ResponseEntity.ok(LoginResponse.builder()
                 .accessToken(token)

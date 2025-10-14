@@ -1,5 +1,6 @@
 package com.heyso.SeedBEApp.common.authentication;
 
+import com.heyso.SeedBEApp.biz.user.model.UserAccount;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,11 +28,12 @@ public class JwtTokenProvider {
         this.issuer = issuer;
     }
 
-    public String createAccessToken(String username, List<String> roles) {
+    public String createAccessToken(UserAccount user, List<String> roles) {
         long now = System.currentTimeMillis();
-        Claims claims = Jwts.claims().setSubject(username);
+        Claims claims = Jwts.claims().setSubject(user.getUserId().toString());
+        claims.put("username", user.getUsername());
+        claims.put("name", user.getName());
         claims.put("roles", roles);
-
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -47,8 +49,18 @@ public class JwtTokenProvider {
     }
 
     public Long extractUserId(Claims claims) {
-        Object v = claims.get("userId");
+        Object v = claims.get("sub");
         return (v == null) ? null : Long.valueOf(String.valueOf(v));
+    }
+
+    public String extractUsername(Claims claims) {
+        Object v = claims.get("username");
+        return (v == null) ? null : String.valueOf(v);
+    }
+
+    public String extractName(Claims claims) {
+        Object v = claims.get("name");
+        return (v == null) ? null : String.valueOf(v);
     }
 
     @SuppressWarnings("unchecked")
