@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -42,6 +43,7 @@ public class NoticeBoardController {
     }
 
     @Operation(summary = "공지 등록 (JSON)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> create(@RequestBody BoardCreateReqDto req, UriComponentsBuilder uriBuilder) {
         req.setCategory(CATEGORY);
@@ -52,6 +54,7 @@ public class NoticeBoardController {
     }
 
     @Operation(summary = "공지 등록 (파일 포함)")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PostMapping(path = "/with-files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createWithFiles(
             @RequestPart("board") BoardCreateReqDto req,
@@ -74,6 +77,7 @@ public class NoticeBoardController {
     }
 
     @Operation(summary = "공지 수정 (JSON)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody BoardUpdateReqDto req) {
         req.setCategory(CATEGORY);
@@ -82,6 +86,7 @@ public class NoticeBoardController {
     }
 
     @Operation(summary = "공지 수정 (파일 포함)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PutMapping(path = "/{id}/with-files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateWithFiles(
             @PathVariable Long id,
@@ -94,6 +99,7 @@ public class NoticeBoardController {
     }
 
     @Operation(summary = "공지 삭제")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         boardService.deleteSoft(id);
